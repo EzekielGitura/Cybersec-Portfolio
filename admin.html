@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Private content console for Ezekiel's portfolio." />
+    <title>Admin | Ezekiel's Portfolio</title>
+    <link rel="icon" type="image/jpeg" href="/Assets/icon.jpg" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="admin">
+    <header class="site-header">
+      <a class="brand" href="/index.html" aria-label="Cybersecurity Portfolio home">
+        <span class="brand-mark brand-logo" aria-hidden="true">
+          <img src="/Assets/logo.png" alt="" />
+        </span>
+        <span>
+          <strong id="brandName">Ezekiel's Portfolio</strong>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="/index.html">Home</a>
+        <a href="/projects.html">Projects</a>
+        <a href="/about.html">About</a>
+        <a href="/services.html">Services</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="page-hero admin-hero" aria-labelledby="adminTitle">
+        <div>
+          <p class="eyebrow">/admin</p>
+          <h1 id="adminTitle">Content console</h1>
+          <p>
+            Authenticate before changing portfolio content, uploading reports, or editing service
+            and experience entries.
+          </p>
+        </div>
+
+        <form class="admin-login-panel" id="authForm">
+          <p class="eyebrow">Authentication</p>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            Password
+            <input name="password" type="password" autocomplete="current-password" />
+          </label>
+          <div class="admin-login-actions">
+            <button class="secondary-action" id="sendMagicLink" type="button">Send Magic Link</button>
+            <button class="primary-action" type="submit">Log In</button>
+          </div>
+          <p class="form-note admin-inline-note" id="authNote" role="status"></p>
+        </form>
+      </section>
+
+      <section class="section-block admin-console-grid" aria-labelledby="consoleTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Console</p>
+            <h2 id="consoleTitle">Publishing Controls</h2>
+          </div>
+          <p class="panel-note" id="adminStatus">Checking admin status...</p>
+        </div>
+
+        <div class="admin-actions-panel">
+          <button class="primary-action" id="openUpload" type="button">Add Project</button>
+          <button class="secondary-action" id="openCms" type="button">Content Studio</button>
+          <button class="secondary-action" id="logoutAdmin" type="button">Log Out</button>
+        </div>
+
+        <div class="project-overview project-overview-compact">
+          <div class="snapshot-grid compact-snapshot compact-snapshot-two">
+            <article>
+              <span id="projectCount">0</span>
+              <p>Total pieces</p>
+            </article>
+            <article>
+              <span id="uploadCount">0</span>
+              <p>Supabase uploads</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="filters" aria-label="Portfolio filters">
+          <label class="search-field">
+            <span>Search</span>
+            <input id="searchInput" type="search" placeholder="Find a project to edit..." />
+          </label>
+          <div class="filter-buttons" role="list" aria-label="Categories">
+            <button class="filter-button active" type="button" data-filter="all">All</button>
+            <button class="filter-button" type="button" data-filter="Incident Response">
+              Incident Response
+            </button>
+            <button class="filter-button" type="button" data-filter="Vulnerability Management">
+              Vulnerability Management
+            </button>
+            <button class="filter-button" type="button" data-filter="Cloud Security">Cloud</button>
+            <button class="filter-button" type="button" data-filter="Security Research">Research</button>
+          </div>
+        </div>
+
+        <div class="carousel-shell">
+          <div class="carousel-toolbar">
+            <p class="carousel-status" id="carouselStatus" aria-live="polite"></p>
+            <div class="carousel-controls" aria-label="Project carousel controls">
+              <button class="icon-button carousel-button" id="prevProject" type="button" aria-label="Previous projects">
+                <span aria-hidden="true">&lt;</span>
+              </button>
+              <button class="icon-button carousel-button" id="nextProject" type="button" aria-label="Next projects">
+                <span aria-hidden="true">&gt;</span>
+              </button>
+            </div>
+          </div>
+          <div class="carousel-viewport">
+            <div class="work-grid carousel-track" id="workGrid" aria-live="polite"></div>
+          </div>
+        </div>
+        <p class="empty-state" id="emptyState" hidden>No projects found.</p>
+      </section>
+    </main>
+
+    <dialog class="upload-dialog" id="uploadDialog" aria-labelledby="uploadTitle">
+      <form class="dialog-card" id="uploadForm" method="dialog">
+        <input name="projectId" type="hidden" />
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Add evidence</p>
+            <h2 id="uploadTitle">Upload a PDF or blog post</h2>
+          </div>
+          <button class="icon-button" id="closeUpload" type="button" aria-label="Close upload form">
+            X
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            Title
+            <input name="title" required maxlength="90" placeholder="SOC investigation report" />
+          </label>
+          <label>
+            Category
+            <select name="category" required>
+              <option>Incident Response</option>
+              <option>Vulnerability Management</option>
+              <option>Cloud Security</option>
+              <option>Security Research</option>
+              <option>Governance, Risk, and Compliance</option>
+              <option>Training and Labs</option>
+            </select>
+          </label>
+          <label>
+            Date
+            <input name="date" type="month" required />
+          </label>
+          <label>
+            Tags
+            <input name="tags" placeholder="SIEM, Linux, MITRE ATT&CK" />
+          </label>
+          <label class="full-width">
+            Short summary
+            <textarea
+              name="summary"
+              rows="3"
+              maxlength="260"
+              required
+              placeholder="Describe the problem, your role, tools used, and result."
+            ></textarea>
+          </label>
+          <label class="full-width">
+            PDF, Markdown, TXT, or HTML file
+            <input
+              name="file"
+              type="file"
+              accept=".pdf,.md,.markdown,.txt,.html,text/plain,text/markdown,text/html,application/pdf"
+            />
+          </label>
+          <label class="full-width">
+            Or paste a blog post/writeup
+            <textarea
+              name="body"
+              rows="8"
+              placeholder="# Investigation notes&#10;&#10;Write or paste markdown here when you are not uploading a file."
+            ></textarea>
+          </label>
+        </div>
+
+        <div class="dialog-actions">
+          <button class="secondary-action" id="clearUploads" type="button">Clear Projects</button>
+          <button class="primary-action" id="saveProjectButton" type="submit">Save Preview</button>
+        </div>
+        <p class="form-note" id="formNote" role="status"></p>
+      </form>
+    </dialog>
+
+    <dialog class="cms-dialog" id="cmsDialog" aria-labelledby="cmsTitle">
+      <form class="dialog-card cms-card" id="cmsForm" method="dialog">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">CMS</p>
+            <h2 id="cmsTitle">Content Studio</h2>
+          </div>
+          <button class="icon-button" id="closeCms" type="button" aria-label="Close content studio">
+            X
+          </button>
+        </div>
+
+        <div class="cms-grid">
+          <section class="cms-panel" aria-labelledby="profileCmsTitle">
+            <h3 id="profileCmsTitle">Profile and Contact</h3>
+            <div class="form-grid compact-form">
+              <label>
+                Portfolio name
+                <input name="profileName" maxlength="80" />
+              </label>
+              <label>
+                Phone
+                <input name="profilePhone" inputmode="tel" />
+              </label>
+              <label>
+                Email
+                <input name="profileEmail" type="email" />
+              </label>
+              <label>
+                Home headline
+                <input name="profileHeadline" maxlength="140" />
+              </label>
+              <label class="full-width">
+                Home intro
+                <textarea name="profileIntro" rows="3"></textarea>
+              </label>
+              <label class="checkbox-line full-width">
+                <input name="showStarterProjects" type="checkbox" />
+                Show starter project examples
+              </label>
+            </div>
+            <button class="primary-action" type="submit">Save Profile</button>
+          </section>
+
+          <section class="cms-panel" aria-labelledby="projectCmsTitle">
+            <h3 id="projectCmsTitle">Projects and Writeups</h3>
+            <p class="panel-note">Use Add Project for PDFs, Markdown, plain text, or HTML writeups.</p>
+            <div class="cms-action-row">
+              <button class="secondary-action" id="openUploadFromCms" type="button">Add Project</button>
+            </div>
+          </section>
+
+          <section class="cms-panel" aria-labelledby="toolCmsTitle">
+            <h3 id="toolCmsTitle">Service Tags</h3>
+            <div class="inline-editor">
+              <input id="toolName" type="text" maxlength="48" placeholder="Service tag or method" />
+              <button class="secondary-action" id="addTool" type="button">Add</button>
+            </div>
+            <div class="editor-list" id="toolEditorList" aria-live="polite"></div>
+          </section>
+
+          <section class="cms-panel" aria-labelledby="experienceCmsTitle">
+            <h3 id="experienceCmsTitle">Experience</h3>
+            <div class="form-grid compact-form">
+              <label>
+                Title
+                <input id="experienceName" maxlength="80" placeholder="Threat Detection" />
+              </label>
+              <label class="full-width">
+                Description
+                <textarea id="experienceDescription" rows="3"></textarea>
+              </label>
+            </div>
+            <button class="secondary-action" id="addExperience" type="button">Add Experience</button>
+            <div class="editor-list" id="experienceEditorList" aria-live="polite"></div>
+          </section>
+        </div>
+        <p class="form-note" id="cmsNote" role="status"></p>
+      </form>
+    </dialog>
+
+    <dialog class="reader-dialog" id="readerDialog" aria-labelledby="readerTitle">
+      <article class="reader-card">
+        <header class="reader-header">
+          <div>
+            <p class="eyebrow" id="readerCategory">Preview</p>
+            <h2 id="readerTitle">Project title</h2>
+          </div>
+          <button class="icon-button" id="closeReader" type="button" aria-label="Close preview">
+            X
+          </button>
+        </header>
+        <div class="reader-meta" id="readerMeta"></div>
+        <div class="reader-body" id="readerBody"></div>
+      </article>
+    </dialog>
+
+    <template id="cardTemplate">
+      <article class="work-card">
+        <button class="card-hitbox" type="button">
+          <div class="preview-frame"></div>
+          <div class="card-copy">
+            <div class="card-topline">
+              <span class="category-pill"></span>
+              <span class="date-pill"></span>
+            </div>
+            <h3></h3>
+            <p></p>
+            <div class="tag-row"></div>
+          </div>
+        </button>
+        <div class="card-actions"></div>
+      </article>
+    </template>
+
+    <script src="/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/supabase-client.js"></script>
+    <script src="/home-particles.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -142,6 +142,7 @@ A short intelligence note with confidence levels, recommended blocks, and monito
 const backend = window.portfolioBackend || {};
 const supabaseClient = backend.client;
 const filesBucket = backend.bucket || "project-files";
+const isAdminPage = document.body.dataset.page === "admin";
 
 const state = {
   content: normalizeContent(contentDefaults),
@@ -607,27 +608,51 @@ function renderContent() {
 }
 
 function updateAdminUi() {
-  if (!isBackendReady()) {
-    setStatus(elements.adminStatus, "Configure the content connection before editing.");
-    elements.openCms.textContent = "Content Studio";
-    elements.openUpload.disabled = true;
-    elements.logoutAdmin.hidden = true;
+  if (!isAdminPage) {
     return;
   }
 
-  elements.openUpload.disabled = false;
+  if (!isBackendReady()) {
+    setStatus(elements.adminStatus, "Configure the content connection before editing.");
+    if (elements.openCms) {
+      elements.openCms.textContent = "Content Studio";
+    }
+    if (elements.openUpload) {
+      elements.openUpload.disabled = true;
+    }
+    if (elements.logoutAdmin) {
+      elements.logoutAdmin.hidden = true;
+    }
+    return;
+  }
+
+  if (elements.openUpload) {
+    elements.openUpload.disabled = false;
+  }
   if (state.isAdmin) {
     setStatus(elements.adminStatus, `Logged in as ${state.user.email}.`);
-    elements.openCms.textContent = "Content Studio";
-    elements.logoutAdmin.hidden = false;
+    if (elements.openCms) {
+      elements.openCms.textContent = "Content Studio";
+    }
+    if (elements.logoutAdmin) {
+      elements.logoutAdmin.hidden = false;
+    }
   } else if (state.user) {
     setStatus(elements.adminStatus, "This account is not listed in admin_users.");
-    elements.openCms.textContent = "Admin Login";
-    elements.logoutAdmin.hidden = false;
+    if (elements.openCms) {
+      elements.openCms.textContent = "Admin Login";
+    }
+    if (elements.logoutAdmin) {
+      elements.logoutAdmin.hidden = false;
+    }
   } else {
     setStatus(elements.adminStatus, "Log in with your admin account to edit.");
-    elements.openCms.textContent = "Admin Login";
-    elements.logoutAdmin.hidden = true;
+    if (elements.openCms) {
+      elements.openCms.textContent = "Admin Login";
+    }
+    if (elements.logoutAdmin) {
+      elements.logoutAdmin.hidden = true;
+    }
   }
 }
 
@@ -726,7 +751,12 @@ async function ensureAdmin() {
   await refreshAuthState();
 
   if (!state.user) {
-    elements.authDialog.showModal();
+    if (elements.authDialog) {
+      elements.authDialog.showModal();
+    } else if (elements.authForm) {
+      elements.authForm.scrollIntoView({ behavior: "smooth", block: "center" });
+      elements.authForm.querySelector("input")?.focus();
+    }
     return false;
   }
 
@@ -804,7 +834,7 @@ function renderCards() {
         tags.append(tagElement);
       });
 
-    if (item.source === "remote" && state.isAdmin) {
+    if (isAdminPage && item.source === "remote" && state.isAdmin) {
       const editButton = document.createElement("button");
       editButton.type = "button";
       editButton.className = "edit-card-button";
@@ -1423,31 +1453,41 @@ async function deleteExperience(id) {
 }
 
 function bindEvents() {
-  elements.openUpload.addEventListener("click", async () => {
-    if (await ensureAdmin()) {
-      resetProjectForm();
-      elements.uploadDialog.showModal();
-    }
-  });
+  if (elements.openUpload) {
+    elements.openUpload.addEventListener("click", async () => {
+      if (await ensureAdmin()) {
+        resetProjectForm();
+        elements.uploadDialog.showModal();
+      }
+    });
+  }
 
-  elements.openCms.addEventListener("click", async () => {
-    if (await ensureAdmin()) {
-      populateCmsForm();
-      elements.cmsDialog.showModal();
-    }
-  });
+  if (elements.openCms) {
+    elements.openCms.addEventListener("click", async () => {
+      if (await ensureAdmin()) {
+        populateCmsForm();
+        elements.cmsDialog.showModal();
+      }
+    });
+  }
 
-  elements.closeUpload.addEventListener("click", () => {
-    elements.uploadDialog.close();
-  });
+  if (elements.closeUpload) {
+    elements.closeUpload.addEventListener("click", () => {
+      elements.uploadDialog.close();
+    });
+  }
 
-  elements.closeCms.addEventListener("click", () => {
-    elements.cmsDialog.close();
-  });
+  if (elements.closeCms) {
+    elements.closeCms.addEventListener("click", () => {
+      elements.cmsDialog.close();
+    });
+  }
 
-  elements.closeAuth.addEventListener("click", () => {
-    elements.authDialog.close();
-  });
+  if (elements.closeAuth) {
+    elements.closeAuth.addEventListener("click", () => {
+      elements.authDialog.close();
+    });
+  }
 
   elements.closeReader.addEventListener("click", () => {
     elements.readerDialog.close();
@@ -1455,106 +1495,130 @@ function bindEvents() {
 
   elements.readerDialog.addEventListener("close", releaseActiveObjectUrl);
 
-  elements.authForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!isBackendReady()) {
-      elements.authNote.textContent = "Sign-in is not available yet.";
-      return;
-    }
+  if (elements.authForm) {
+    elements.authForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!isBackendReady()) {
+        elements.authNote.textContent = "Sign-in is not available yet.";
+        return;
+      }
 
-    const formData = new FormData(elements.authForm);
-    const email = String(formData.get("email") || "").trim();
-    const password = String(formData.get("password") || "");
+      const formData = new FormData(elements.authForm);
+      const email = String(formData.get("email") || "").trim();
+      const password = String(formData.get("password") || "");
 
-    if (!password) {
-      elements.authNote.textContent = "Enter your password or use a magic link.";
-      return;
-    }
+      if (!password) {
+        elements.authNote.textContent = "Enter your password or use a magic link.";
+        return;
+      }
 
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) {
-      elements.authNote.textContent = error.message;
-      return;
-    }
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        elements.authNote.textContent = error.message;
+        return;
+      }
 
-    await refreshAuthState();
-    if (state.isAdmin) {
-      elements.authDialog.close();
-      populateCmsForm();
-      elements.cmsDialog.showModal();
-    }
-  });
-
-  elements.sendMagicLink.addEventListener("click", async () => {
-    if (!isBackendReady()) {
-      elements.authNote.textContent = "Sign-in is not available yet.";
-      return;
-    }
-
-    const formData = new FormData(elements.authForm);
-    const email = String(formData.get("email") || "").trim();
-    if (!email) {
-      elements.authNote.textContent = "Add your email first.";
-      return;
-    }
-
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.href }
-    });
-
-    elements.authNote.textContent = error ? error.message : "Magic link sent. Check your email.";
-  });
-
-  elements.logoutAdmin.addEventListener("click", async () => {
-    if (isBackendReady()) {
-      await supabaseClient.auth.signOut();
       await refreshAuthState();
-      elements.cmsDialog.close();
-    }
-  });
+      if (state.isAdmin) {
+        if (elements.authDialog) {
+          elements.authDialog.close();
+        }
+        populateCmsForm();
+        elements.cmsDialog.showModal();
+      }
+    });
+  }
 
-  elements.uploadForm.addEventListener("submit", handleUpload);
+  if (elements.sendMagicLink) {
+    elements.sendMagicLink.addEventListener("click", async () => {
+      if (!isBackendReady()) {
+        elements.authNote.textContent = "Sign-in is not available yet.";
+        return;
+      }
 
-  elements.cmsForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!(await ensureAdmin())) {
-      return;
-    }
+      const formData = new FormData(elements.authForm);
+      const email = String(formData.get("email") || "").trim();
+      if (!email) {
+        elements.authNote.textContent = "Add your email first.";
+        return;
+      }
 
-    try {
-      await saveProfileFromCms();
-      elements.cmsNote.textContent = "Profile saved.";
-    } catch (error) {
-      console.error(error);
-      elements.cmsNote.textContent = "The profile could not be saved.";
-    }
-  });
+      const { error } = await supabaseClient.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.href }
+      });
 
-  elements.openUploadFromCms.addEventListener("click", async () => {
-    if (await ensureAdmin()) {
-      resetProjectForm();
-      elements.cmsDialog.close();
-      elements.uploadDialog.showModal();
-    }
-  });
+      elements.authNote.textContent = error ? error.message : "Magic link sent. Check your email.";
+    });
+  }
 
-  elements.addTool.addEventListener("click", addTool);
-  elements.addExperience.addEventListener("click", addExperience);
+  if (elements.logoutAdmin) {
+    elements.logoutAdmin.addEventListener("click", async () => {
+      if (isBackendReady()) {
+        await supabaseClient.auth.signOut();
+        await refreshAuthState();
+        if (elements.cmsDialog?.open) {
+          elements.cmsDialog.close();
+        }
+      }
+    });
+  }
 
-  elements.toolEditorList.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-tool-id]");
-    if (button) {
-      deleteTool(button.dataset.toolId);
-    }
-  });
+  if (elements.uploadForm) {
+    elements.uploadForm.addEventListener("submit", handleUpload);
+  }
 
-  elements.experienceEditorList.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-experience-id]");
-    if (button) {
-      deleteExperience(button.dataset.experienceId);
-    }
-  });
+  if (elements.cmsForm) {
+    elements.cmsForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!(await ensureAdmin())) {
+        return;
+      }
+
+      try {
+        await saveProfileFromCms();
+        elements.cmsNote.textContent = "Profile saved.";
+      } catch (error) {
+        console.error(error);
+        elements.cmsNote.textContent = "The profile could not be saved.";
+      }
+    });
+  }
+
+  if (elements.openUploadFromCms) {
+    elements.openUploadFromCms.addEventListener("click", async () => {
+      if (await ensureAdmin()) {
+        resetProjectForm();
+        elements.cmsDialog.close();
+        elements.uploadDialog.showModal();
+      }
+    });
+  }
+
+  if (elements.addTool) {
+    elements.addTool.addEventListener("click", addTool);
+  }
+  if (elements.addExperience) {
+    elements.addExperience.addEventListener("click", addExperience);
+  }
+
+  if (elements.toolEditorList) {
+    elements.toolEditorList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-tool-id]");
+      if (button) {
+        deleteTool(button.dataset.toolId);
+      }
+    });
+  }
+
+  if (elements.experienceEditorList) {
+    elements.experienceEditorList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-experience-id]");
+      if (button) {
+        deleteExperience(button.dataset.experienceId);
+      }
+    });
+  }
 
   elements.prevProject.addEventListener("click", () => scrollProjects(-1));
   elements.nextProject.addEventListener("click", () => scrollProjects(1));
@@ -1605,7 +1669,9 @@ function bindEvents() {
     }
   });
 
-  elements.clearUploads.addEventListener("click", clearProjects);
+  if (elements.clearUploads) {
+    elements.clearUploads.addEventListener("click", clearProjects);
+  }
   if (elements.exportData) {
     elements.exportData.addEventListener("click", exportPortfolioData);
   }
