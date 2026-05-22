@@ -5,56 +5,206 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Cybersecurity portfolio for projects, reports, blog posts, and professional experience."
+      content="Resume homepage for Ezekiel Waweru, cybersecurity analyst portfolio."
     />
-    <title>Cybersecurity Portfolio</title>
+    <title>Home | Ezekiel's Portfolio</title>
     <link rel="icon" type="image/jpeg" href="Assets/icon.jpg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-page="home">
+    <canvas class="site-particle-bg" id="homeParticleCanvas" aria-hidden="true"></canvas>
+
     <header class="site-header">
       <a class="brand" href="index.html" aria-label="Cybersecurity Portfolio home">
         <span class="brand-mark brand-logo" aria-hidden="true">
           <img src="Assets/logo.png" alt="" />
         </span>
         <span>
-          <strong id="brandName">Cybersecurity Portfolio</strong>
-          <small>Projects, reports, and field notes</small>
+          <strong id="brandName">Ezekiel's Portfolio</strong>
         </span>
       </a>
       <nav class="site-nav" aria-label="Primary navigation">
+        <a href="index.html" aria-current="page">Home</a>
         <a href="projects.html">Projects</a>
-        <a href="experience.html">Experience</a>
-        <a href="toolkit.html">Toolkit</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
         <a href="contact.html">Contact</a>
       </nav>
     </header>
 
     <main id="top">
-      <section class="home-hero" aria-labelledby="heroTitle">
-        <div class="home-copy">
-          <p class="eyebrow">Security analyst portfolio</p>
-          <h1 id="heroTitle">Showcase incident response, security research, and hands-on labs.</h1>
-          <p class="hero-text" id="heroText">
-            A working portfolio hub for PDF reports, blog posts, project writeups,
-            and experience notes. Add your own evidence, preview it in place, and
-            let reviewers move through your work without leaving the site.
+      <section class="resume-hero" aria-labelledby="resumeTitle">
+        <div class="resume-terminal">
+          <p class="terminal-kicker">root@portfolio:~$ whoami</p>
+          <h1 id="resumeTitle">Ezekiel Waweru</h1>
+          <p class="resume-role">Cybersecurity Analyst // SOC Analyst // GRC // Software Development</p>
+          <p>
+            I investigate security events, document evidence, assess exposure, and translate technical findings
+            into clear remediation steps. My work combines practical labs, report writing, cloud and identity
+            reviews, and incident response thinking.
           </p>
-          <div class="hero-actions">
-            <a class="primary-action" href="projects.html">View Projects</a>
-            <a class="secondary-action" href="contact.html">Contact Me</a>
+          <div class="terminal-actions">
+            <a class="primary-action" href="projects.html">View Evidence</a>
+            <a class="secondary-action" href="contact.html">Contact</a>
           </div>
         </div>
 
-        <aside class="home-logo-panel" aria-label="Official portfolio logo">
-          <img src="Assets/logo.png" alt="Cybersecurity portfolio logo" />
+        <aside class="resume-id-card" aria-label="Resume quick facts">
+          <img src="Assets/Ezekiel.jpg" alt="Ezekiel Waweru" />
+          <dl>
+            <div>
+              <dt>Status</dt>
+              <dd>Available</dd>
+            </div>
+            <div>
+              <dt>Location</dt>
+              <dd>Nairobi, Kenya</dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd>gituraezekiel@gmail.com</dd>
+            </div>
+            <div>
+              <dt>Phone</dt>
+              <dd>+254727550182</dd>
+            </div>
+          </dl>
         </aside>
+      </section>
+
+      <section class="resume-section" aria-labelledby="homeExperienceTitle">
+        <div class="terminal-section-heading">
+          <p class="eyebrow">/resume/experience</p>
+          <h2 id="homeExperienceTitle">Experience</h2>
+        </div>
+        <div class="timeline timeline-page resume-experience-list" id="experienceList"></div>
+      </section>
+
+      <section class="resume-section" aria-labelledby="certificationsTitle">
+        <div class="terminal-section-heading">
+          <p class="eyebrow">/resume/certifications</p>
+          <h2 id="certificationsTitle">Certifications</h2>
+        </div>
+        <div class="certification-grid">
+          <article class="certification-card">
+            <span>01</span>
+            <div>
+              <h3>TryHackMe Senior SOC Track</h3>
+              <p>Security operations, alert triage, detection logic, and incident response practice.</p>
+              <strong>Practical training</strong>
+            </div>
+          </article>
+          <article class="certification-card">
+            <span>02</span>
+            <div>
+              <h3>Information Security Analysis</h3>
+              <p>Risk review, evidence handling, vulnerability assessment, and technical reporting.</p>
+              <strong>Portfolio evidence</strong>
+            </div>
+          </article>
+          <article class="certification-card">
+            <span>03</span>
+            <div>
+              <h3>Network Security Foundations</h3>
+              <p>Network discovery, traffic inspection, service exposure review, and remediation planning.</p>
+              <strong>Hands-on labs</strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="resume-section" aria-labelledby="resumeSummaryTitle">
+        <div class="terminal-section-heading">
+          <p class="eyebrow">/resume/summary</p>
+          <h2 id="resumeSummaryTitle">Professional Summary</h2>
+        </div>
+        <div class="resume-grid">
+          <article>
+            <h3>Security Analysis</h3>
+            <p>Alert triage, log review, suspicious activity investigation, and incident documentation.</p>
+          </article>
+          <article>
+            <h3>Risk and Vulnerability</h3>
+            <p>Exposure validation, vulnerability reporting, remediation prioritization, and control review.</p>
+          </article>
+          <article>
+            <h3>Communication</h3>
+            <p>Clear writeups, executive-friendly summaries, technical evidence, and action-focused recommendations.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="resume-section" aria-labelledby="skillsMatrixTitle">
+        <div class="terminal-section-heading">
+          <p class="eyebrow">/resume/skills</p>
+          <h2 id="skillsMatrixTitle">Skills Matrix</h2>
+        </div>
+        <div class="skills-matrix" role="table" aria-label="Cybersecurity skills matrix">
+          <div class="matrix-row matrix-head" role="row">
+            <span role="columnheader">Domain</span>
+            <span role="columnheader">Tools / Methods</span>
+            <span role="columnheader">Level</span>
+            <span role="columnheader">Evidence</span>
+          </div>
+          <div class="matrix-row" role="row">
+            <span role="cell">SOC / Detection</span>
+            <span role="cell">SIEM, alert triage, MITRE ATT&CK, log correlation</span>
+            <span role="cell">Intermediate</span>
+            <span role="cell">Incident labs and reports</span>
+          </div>
+          <div class="matrix-row" role="row">
+            <span role="cell">Network Security</span>
+            <span role="cell">Nmap, Wireshark, segmentation review, service analysis</span>
+            <span role="cell">Intermediate</span>
+            <span role="cell">Assessment writeups</span>
+          </div>
+          <div class="matrix-row" role="row">
+            <span role="cell">Vulnerability Management</span>
+            <span role="cell">Scan validation, risk rating, remediation planning</span>
+            <span role="cell">Intermediate</span>
+            <span role="cell">Exposure reports</span>
+          </div>
+          <div class="matrix-row" role="row">
+            <span role="cell">Cloud / Identity</span>
+            <span role="cell">IAM review, logging checks, least privilege, hardening</span>
+            <span role="cell">Growing</span>
+            <span role="cell">Cloud lab notes</span>
+          </div>
+          <div class="matrix-row" role="row">
+            <span role="cell">Security Writing</span>
+            <span role="cell">Findings, executive summaries, evidence chains</span>
+            <span role="cell">Strong</span>
+            <span role="cell">Portfolio writeups</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="resume-section resume-bottom-grid" aria-label="Resume details">
+        <article>
+          <p class="eyebrow">/focus</p>
+          <h2>Current Focus</h2>
+          <ul class="terminal-list">
+            <li>Security operations workflows and alert investigation.</li>
+            <li>Network and vulnerability assessment reporting.</li>
+            <li>Cloud identity and logging control reviews.</li>
+          </ul>
+        </article>
+        <article>
+          <p class="eyebrow">/proof</p>
+          <h2>Portfolio Evidence</h2>
+          <ul class="terminal-list">
+            <li>PDF reports and project previews.</li>
+            <li>Blog-style writeups for labs and research.</li>
+            <li>Documented methodology, results, and remediation steps.</li>
+          </ul>
+        </article>
       </section>
     </main>
 
     <script src="supabase-config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
+    <script src="home-particles.js"></script>
     <script src="site.js"></script>
   </body>
 </html>

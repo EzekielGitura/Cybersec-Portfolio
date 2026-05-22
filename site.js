@@ -1,6 +1,6 @@
 const siteDefaults = {
   profile: {
-    name: "Cybersecurity Portfolio",
+    name: "Ezekiel's Portfolio",
     phone: "+254727550182",
     email: "gituraezekiel@gmail.com",
     headline: "Showcase incident response, security research, and hands-on labs.",
@@ -60,6 +60,14 @@ function setHref(selector, value) {
   const element = document.querySelector(selector);
   if (element) {
     element.href = value;
+  }
+}
+
+function setTextAndHref(selector, text, href) {
+  const element = document.querySelector(selector);
+  if (element) {
+    element.textContent = text;
+    element.href = href;
   }
 }
 
@@ -137,12 +145,12 @@ async function initSite() {
   const content = await loadSiteContent();
   const { profile } = content;
 
-  setText("#brandName", profile.name);
-  setText("#contactBrandName", profile.name);
+  setText("#brandName", "Ezekiel's Portfolio");
+  setText("#contactBrandName", "Ezekiel's Portfolio");
   setText("#heroTitle", profile.headline);
   setText("#heroText", profile.intro);
-  setText("#phoneDisplay", profile.phone);
-  setText("#emailDisplay", profile.email);
+  setTextAndHref("#phoneDisplay", profile.phone, `tel:${compactPhone(profile.phone)}`);
+  setTextAndHref("#emailDisplay", profile.email, `mailto:${profile.email}`);
   setHref("#phoneLink", `tel:${compactPhone(profile.phone)}`);
   setHref("#emailLink", `mailto:${profile.email}`);
   renderExperience(content.experience);

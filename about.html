@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="About the cybersecurity analyst behind this portfolio, including approach, values, and experience."
+    />
+    <title>About | Cybersecurity Portfolio</title>
+    <link rel="icon" type="image/jpeg" href="Assets/icon.jpg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="about">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Cybersecurity Portfolio home">
+        <span class="brand-mark brand-logo" aria-hidden="true">
+          <img src="Assets/logo.png" alt="" />
+        </span>
+        <span>
+          <strong id="brandName">Ezekiel's Portfolio</strong>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="index.html">Home</a>
+        <a href="projects.html">Projects</a>
+        <a href="about.html" aria-current="page">About</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="about-hero" aria-labelledby="aboutTitle">
+        <div class="about-hero-copy">
+          <p class="eyebrow">About Me</p>
+          <h1 id="aboutTitle">Security-minded, evidence-led, and built for clear communication.</h1>
+          <p>
+            I focus on practical cybersecurity work: investigating signals, documenting what matters,
+            reducing risk, and turning technical findings into decisions people can act on.
+          </p>
+        </div>
+        <figure class="about-photo-card">
+          <img src="Assets/Ezekiel.jpg" alt="Ezekiel Waweru" />
+        </figure>
+      </section>
+
+      <section class="about-section first-section" aria-labelledby="aboutMeTitle">
+        <div class="center-heading">
+          <p class="eyebrow">Profile</p>
+          <h2 id="aboutMeTitle">About Me</h2>
+          <p>
+            I am a cybersecurity practitioner building a portfolio around hands-on labs,
+            security research, vulnerability assessment, cloud and identity reviews, and
+            incident response writeups. My work is strongest when it connects technical
+            evidence to a crisp explanation of risk, impact, and next steps.
+          </p>
+        </div>
+
+        <div class="approach-block" aria-labelledby="approachTitle">
+          <h3 id="approachTitle">My Approach</h3>
+          <div class="approach-grid">
+            <article>
+              <span>01</span>
+              <p>Understand the system, users, assets, and realistic threat paths.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <p>Collect evidence carefully, validate findings, and avoid noisy assumptions.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <p>Communicate findings in plain language with prioritized remediation steps.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="about-stats" aria-label="Portfolio stats">
+          <article>
+            <strong>02+</strong>
+            <span>Years of Practice</span>
+          </article>
+          <article>
+            <strong>15+</strong>
+            <span>Projects and Labs</span>
+          </article>
+          <article>
+            <strong>05+</strong>
+            <span>Security Domains</span>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="home-particles.js"></script>
+    <script src="site.js"></script>
+  </body>
+</html>

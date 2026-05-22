@@ -15,35 +15,48 @@
           <img src="Assets/logo.png" alt="" />
         </span>
         <span>
-          <strong id="brandName">Cybersecurity Portfolio</strong>
-          <small>Projects, reports, and field notes</small>
+          <strong id="brandName">Ezekiel's Portfolio</strong>
         </span>
       </a>
       <nav class="site-nav" aria-label="Primary navigation">
+        <a href="index.html">Home</a>
         <a href="projects.html" aria-current="page">Projects</a>
-        <a href="experience.html">Experience</a>
-        <a href="toolkit.html">Toolkit</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
         <a href="contact.html">Contact</a>
       </nav>
     </header>
 
     <main id="top">
-      <section class="page-hero" aria-labelledby="workTitle">
-        <p class="eyebrow">Evidence library</p>
-        <h1 id="workTitle">Projects and writeups</h1>
-        <p>
-          Browse PDF reports, lab notes, blog posts, and security research. Search by keyword,
-          filter by domain, and open each preview in place.
-        </p>
-        <div class="hero-actions">
-          <button class="primary-action" id="openUpload" type="button">Add Work</button>
-          <button class="secondary-action" id="openCms" type="button">Content Studio</button>
+      <section class="page-hero projects-hero" aria-labelledby="workTitle">
+        <div class="projects-hero-copy">
+          <p class="eyebrow">Evidence library</p>
+          <h1 id="workTitle">Projects and writeups</h1>
+          <p>
+            Browse PDF reports, lab notes, blog posts, and security research. Search by keyword,
+            filter by domain, and open each preview in place.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-action" id="openUpload" type="button">Add Work</button>
+            <button class="secondary-action" id="openCms" type="button">Content Studio</button>
+          </div>
+        </div>
+
+        <div class="projects-hero-panel" aria-label="Evidence library index">
+          <p class="terminal-kicker">library@evidence:~$ index</p>
+          <div class="project-terminal-list" aria-hidden="true">
+            <span>./reports/pdf</span>
+            <span>./labs/notes</span>
+            <span>./research/posts</span>
+            <span>./carousel/previews</span>
+          </div>
+          <p>Structured proof, readable previews, and field notes grouped for quick review.</p>
         </div>
       </section>
 
       <section class="section-block first-section" aria-label="Project controls">
-        <div class="project-overview">
-          <div class="snapshot-grid compact-snapshot">
+        <div class="project-overview project-overview-compact">
+          <div class="snapshot-grid compact-snapshot compact-snapshot-two">
             <article>
               <span id="projectCount">0</span>
               <p>Published pieces</p>
@@ -52,16 +65,6 @@
               <span>6</span>
               <p>Security domains</p>
             </article>
-            <article>
-              <span id="uploadCount">0</span>
-              <p>Supabase entries</p>
-            </article>
-          </div>
-          <div class="quick-controls">
-            <button id="exportData" type="button">Export Data</button>
-            <label class="file-control" for="importData">Import Data</label>
-            <input id="importData" type="file" accept="application/json" />
-            <span class="backend-status" id="backendStatus">Checking backend</span>
           </div>
         </div>
 
@@ -227,15 +230,14 @@
             <p class="panel-note" id="adminStatus">Admin status unavailable.</p>
             <div class="cms-action-row">
               <button class="secondary-action" id="openUploadFromCms" type="button">Add Project</button>
-              <button class="secondary-action" id="exportDataCms" type="button">Export Backup</button>
               <button class="secondary-action" id="logoutAdmin" type="button">Log Out</button>
             </div>
           </section>
 
           <section class="cms-panel" aria-labelledby="toolCmsTitle">
-            <h3 id="toolCmsTitle">Toolkit</h3>
+            <h3 id="toolCmsTitle">Service Tags</h3>
             <div class="inline-editor">
-              <input id="toolName" type="text" maxlength="48" placeholder="Tool or method" />
+              <input id="toolName" type="text" maxlength="48" placeholder="Service tag or method" />
               <button class="secondary-action" id="addTool" type="button">Add</button>
             </div>
             <div class="editor-list" id="toolEditorList" aria-live="polite"></div>
@@ -327,6 +329,7 @@
     <script src="supabase-config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
+    <script src="home-particles.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

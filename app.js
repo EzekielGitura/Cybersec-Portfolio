@@ -1,6 +1,6 @@
 const contentDefaults = {
   profile: {
-    name: "Cybersecurity Portfolio",
+    name: "Ezekiel's Portfolio",
     phone: "+254727550182",
     email: "gituraezekiel@gmail.com",
     headline: "Showcase incident response, security research, and hands-on labs.",
@@ -202,7 +202,6 @@ const elements = {
   cmsNote: document.querySelector("#cmsNote"),
   authNote: document.querySelector("#authNote"),
   adminStatus: document.querySelector("#adminStatus"),
-  backendStatus: document.querySelector("#backendStatus"),
   logoutAdmin: document.querySelector("#logoutAdmin"),
   readerCategory: document.querySelector("#readerCategory"),
   readerTitle: document.querySelector("#readerTitle"),
@@ -536,7 +535,7 @@ function renderEditorList(container, items, type) {
 
     if (item.source === "fallback") {
       remove.disabled = true;
-      remove.title = "Connect Supabase to edit this starter item.";
+      remove.title = "Configure content editing to change this starter item.";
     }
 
     row.append(content, remove);
@@ -587,7 +586,7 @@ function populateProjectForm(item) {
 function renderContent() {
   const { profile } = state.content;
   if (elements.brandName) {
-    elements.brandName.textContent = profile.name;
+    elements.brandName.textContent = "Ezekiel's Portfolio";
   }
   if (elements.heroTitle) {
     elements.heroTitle.textContent = profile.headline;
@@ -609,9 +608,8 @@ function renderContent() {
 
 function updateAdminUi() {
   if (!isBackendReady()) {
-    setStatus(elements.backendStatus, "Supabase not configured");
-    setStatus(elements.adminStatus, "Add your Supabase URL and anon key in supabase-config.js.");
-    elements.openCms.textContent = "Connect Supabase";
+    setStatus(elements.adminStatus, "Configure the content connection before editing.");
+    elements.openCms.textContent = "Content Studio";
     elements.openUpload.disabled = true;
     elements.logoutAdmin.hidden = true;
     return;
@@ -619,17 +617,14 @@ function updateAdminUi() {
 
   elements.openUpload.disabled = false;
   if (state.isAdmin) {
-    setStatus(elements.backendStatus, `Admin: ${state.user.email}`);
     setStatus(elements.adminStatus, `Logged in as ${state.user.email}.`);
     elements.openCms.textContent = "Content Studio";
     elements.logoutAdmin.hidden = false;
   } else if (state.user) {
-    setStatus(elements.backendStatus, "Logged in, not admin");
     setStatus(elements.adminStatus, "This account is not listed in admin_users.");
     elements.openCms.textContent = "Admin Login";
     elements.logoutAdmin.hidden = false;
   } else {
-    setStatus(elements.backendStatus, "Supabase connected");
     setStatus(elements.adminStatus, "Log in with your admin account to edit.");
     elements.openCms.textContent = "Admin Login";
     elements.logoutAdmin.hidden = true;
@@ -724,7 +719,7 @@ async function refreshAuthState() {
 
 async function ensureAdmin() {
   if (!isBackendReady()) {
-    window.alert("Connect Supabase in supabase-config.js before editing content.");
+    window.alert("Content editing is not configured yet.");
     return false;
   }
 
@@ -826,8 +821,12 @@ function renderCards() {
     elements.workGrid.append(fragment);
   });
 
-  elements.projectCount.textContent = state.items.length.toString();
-  elements.uploadCount.textContent = state.items.filter((item) => item.source === "remote").length.toString();
+  if (elements.projectCount) {
+    elements.projectCount.textContent = state.items.length.toString();
+  }
+  if (elements.uploadCount) {
+    elements.uploadCount.textContent = state.items.filter((item) => item.source === "remote").length.toString();
+  }
   elements.workGrid.scrollLeft = 0;
   requestAnimationFrame(updateCarouselControls);
 }
@@ -942,7 +941,7 @@ function renderReader(item) {
   elements.readerMeta.innerHTML = "";
   elements.readerBody.innerHTML = "";
 
-  [formatDate(item.date), item.source === "remote" ? "Supabase" : "Starter", ...normalizeTags(item.tags)].forEach(
+  [formatDate(item.date), item.source === "remote" ? "Uploaded" : "Starter", ...normalizeTags(item.tags)].forEach(
     (value) => {
       const pill = document.createElement("span");
       pill.textContent = value;
@@ -1095,11 +1094,11 @@ async function handleUpload(event) {
     }
 
     resetProjectForm();
-    elements.formNote.textContent = projectId ? "Project updated in Supabase." : "Saved to Supabase. The preview is now in your library.";
+    elements.formNote.textContent = projectId ? "Project updated." : "Saved. The preview is now in your library.";
     await refreshItems();
   } catch (error) {
     console.error(error);
-    elements.formNote.textContent = "Supabase could not save this project. Check your policies and connection.";
+    elements.formNote.textContent = "The project could not be saved. Check your content policies and connection.";
     if (uploadedFilePath) {
       await supabase.storage.from(filesBucket).remove([uploadedFilePath]);
     }
@@ -1262,14 +1261,14 @@ async function deleteProject(id) {
     return;
   }
 
-  const confirmed = window.confirm(`Delete "${item.title}" from Supabase?`);
+  const confirmed = window.confirm(`Delete "${item.title}" from your content library?`);
   if (!confirmed) {
     return;
   }
 
   const { error } = await supabase.from("projects").delete().eq("id", id);
   if (error) {
-    window.alert("Supabase could not delete this project.");
+    window.alert("The project could not be deleted.");
     console.error(error);
     return;
   }
@@ -1286,7 +1285,7 @@ async function clearProjects() {
     return;
   }
 
-  const confirmed = window.confirm("Remove all projects and writeups from Supabase?");
+  const confirmed = window.confirm("Remove all projects and writeups from your content library?");
   if (!confirmed) {
     return;
   }
@@ -1296,7 +1295,7 @@ async function clearProjects() {
 
   if (error) {
     console.error(error);
-    elements.formNote.textContent = "Supabase could not clear projects.";
+    elements.formNote.textContent = "The projects could not be cleared.";
     return;
   }
 
@@ -1304,7 +1303,7 @@ async function clearProjects() {
     await supabase.storage.from(filesBucket).remove(filePaths);
   }
 
-  elements.formNote.textContent = "Projects cleared from Supabase.";
+  elements.formNote.textContent = "Projects cleared.";
   await refreshItems();
 }
 
@@ -1348,7 +1347,7 @@ async function addTool() {
 
   if (error) {
     console.error(error);
-    elements.cmsNote.textContent = "Supabase could not add that tool.";
+    elements.cmsNote.textContent = "That service tag could not be added.";
     return;
   }
 
@@ -1378,7 +1377,7 @@ async function addExperience() {
 
   if (error) {
     console.error(error);
-    elements.cmsNote.textContent = "Supabase could not add that experience.";
+    elements.cmsNote.textContent = "That experience could not be added.";
     return;
   }
 
@@ -1397,7 +1396,7 @@ async function deleteTool(id) {
   const { error } = await supabase.from("toolkit_items").delete().eq("id", id);
   if (error) {
     console.error(error);
-    elements.cmsNote.textContent = "Supabase could not remove that tool.";
+    elements.cmsNote.textContent = "That service tag could not be removed.";
     return;
   }
 
@@ -1414,7 +1413,7 @@ async function deleteExperience(id) {
   const { error } = await supabase.from("experience_entries").delete().eq("id", id);
   if (error) {
     console.error(error);
-    elements.cmsNote.textContent = "Supabase could not remove that experience.";
+    elements.cmsNote.textContent = "That experience could not be removed.";
     return;
   }
 
@@ -1459,7 +1458,7 @@ function bindEvents() {
   elements.authForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!isBackendReady()) {
-      elements.authNote.textContent = "Connect Supabase first.";
+      elements.authNote.textContent = "Sign-in is not available yet.";
       return;
     }
 
@@ -1488,7 +1487,7 @@ function bindEvents() {
 
   elements.sendMagicLink.addEventListener("click", async () => {
     if (!isBackendReady()) {
-      elements.authNote.textContent = "Connect Supabase first.";
+      elements.authNote.textContent = "Sign-in is not available yet.";
       return;
     }
 
@@ -1525,10 +1524,10 @@ function bindEvents() {
 
     try {
       await saveProfileFromCms();
-      elements.cmsNote.textContent = "Profile saved to Supabase.";
+      elements.cmsNote.textContent = "Profile saved.";
     } catch (error) {
       console.error(error);
-      elements.cmsNote.textContent = "Supabase could not save the profile.";
+      elements.cmsNote.textContent = "The profile could not be saved.";
     }
   });
 
@@ -1607,20 +1606,25 @@ function bindEvents() {
   });
 
   elements.clearUploads.addEventListener("click", clearProjects);
-  elements.exportData.addEventListener("click", exportPortfolioData);
-  elements.exportDataCms.addEventListener("click", exportPortfolioData);
-
-  elements.importData.addEventListener("change", async (event) => {
-    const [file] = event.target.files;
-    try {
-      await importPortfolioData(file);
-    } catch (error) {
-      window.alert("That import file could not be imported into Supabase.");
-      console.error(error);
-    } finally {
-      event.target.value = "";
-    }
-  });
+  if (elements.exportData) {
+    elements.exportData.addEventListener("click", exportPortfolioData);
+  }
+  if (elements.exportDataCms) {
+    elements.exportDataCms.addEventListener("click", exportPortfolioData);
+  }
+  if (elements.importData) {
+    elements.importData.addEventListener("change", async (event) => {
+      const [file] = event.target.files;
+      try {
+        await importPortfolioData(file);
+      } catch (error) {
+        window.alert("That import file could not be imported.");
+        console.error(error);
+      } finally {
+        event.target.value = "";
+      }
+    });
+  }
 
   if (isBackendReady()) {
     supabase.auth.onAuthStateChange(async () => {
@@ -1642,5 +1646,5 @@ init().catch((error) => {
   renderContent();
   updateAdminUi();
   elements.emptyState.hidden = false;
-  elements.emptyState.textContent = "The portfolio could not load from Supabase. Check your schema and config.";
+  elements.emptyState.textContent = "The portfolio could not load. Check your content connection.";
 });

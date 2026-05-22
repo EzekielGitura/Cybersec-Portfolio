@@ -1,6 +1,6 @@
 # Cybersecurity Portfolio
 
-A Supabase-backed cybersecurity portfolio with separate pages for the home intro, projects, experience, toolkit, and contact details.
+A Supabase-backed cybersecurity portfolio with separate pages for the home resume, projects, services, and contact details.
 
 ## Run Locally
 
@@ -11,6 +11,40 @@ python -m http.server 8080
 ```
 
 Then visit `http://localhost:8080`.
+
+## Deploy With Netlify CLI
+
+Use Git Bash or WSL:
+
+```bash
+cd "/c/Users/Admin/Projects/Cybersec Portfolio"
+netlify login
+netlify status
+netlify init
+netlify deploy
+netlify deploy --prod
+```
+
+For `netlify init`, choose:
+
+- Create and configure a new site
+- Build command: leave blank
+- Publish directory: `.`
+
+The project includes `netlify.toml`, so Netlify should detect those settings automatically.
+
+After production deploy, copy your Netlify URL into Supabase:
+
+- Authentication -> URL Configuration -> Site URL
+- Authentication -> URL Configuration -> Redirect URLs
+
+Add:
+
+```txt
+https://your-site-name.netlify.app
+https://your-site-name.netlify.app/*
+http://127.0.0.1:8080/*
+```
 
 ## Supabase Setup
 
@@ -41,7 +75,7 @@ Use `Content Studio` on `projects.html`. It requires Supabase login and admin ac
 You can update:
 
 - Portfolio name, hero copy, phone, and email
-- Toolkit items
+- Service tags and methods
 - Experience entries
 - Project/writeup content
 - PDF uploads through Supabase Storage
@@ -50,13 +84,15 @@ Public visitors can read the portfolio. Only users listed in `admin_users` can w
 
 ## Files
 
-- `index.html` - intro-focused homepage
+- `index.html` - home resume with skills matrix and experience
 - `projects.html` - project carousel, previews, uploads, and CMS dialogs
-- `experience.html` - experience page
-- `toolkit.html` - toolkit page
+- `about.html` - about page with approach and stats
+- `experience.html` - redirect to the Home resume experience section
+- `services.html` - cybersecurity services page
+- `toolkit.html` - redirect to services
 - `contact.html` - contact page
 - `app.js` - Supabase-backed portfolio logic
-- `site.js` - shared Supabase-backed rendering for intro, experience, toolkit, and contact pages
+- `site.js` - shared Supabase-backed rendering for resume, experience, services, and contact pages
 - `supabase-config.js` - Supabase project configuration
 - `supabase/schema.sql` - database, storage, and security policies
 - `Assets/logo.png` - official logo
