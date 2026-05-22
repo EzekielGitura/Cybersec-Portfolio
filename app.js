@@ -140,7 +140,7 @@ A short intelligence note with confidence levels, recommended blocks, and monito
 ];
 
 const backend = window.portfolioBackend || {};
-const supabase = backend.client;
+const supabaseClient = backend.client;
 const filesBucket = backend.bucket || "project-files";
 
 const state = {
@@ -223,7 +223,7 @@ const elements = {
 };
 
 function isBackendReady() {
-  return Boolean(backend.isConfigured && backend.isConfigured() && supabase);
+  return Boolean(backend.isConfigured && backend.isConfigured() && supabaseClient);
 }
 
 function normalizeContent(content = {}) {
@@ -451,7 +451,7 @@ function rowToProject(row) {
   };
 
   if (item.filePath && isBackendReady()) {
-    item.fileUrl = supabase.storage.from(filesBucket).getPublicUrl(item.filePath).data.publicUrl;
+    item.fileUrl = supabaseClient.storage.from(filesBucket).getPublicUrl(item.filePath).data.publicUrl;
   }
 
   return item;
@@ -638,9 +638,9 @@ async function loadRemoteContent() {
   }
 
   const [profileResult, toolkitResult, experienceResult] = await Promise.all([
-    supabase.from("profile").select("*").eq("id", 1).maybeSingle(),
-    supabase.from("toolkit_items").select("*").order("sort_order", { ascending: true }),
-    supabase.from("experience_entries").select("*").order("sort_order", { ascending: true })
+    supabaseClient.from("profile").select("*").eq("id", 1).maybeSingle(),
+    supabaseClient.from("toolkit_items").select("*").order("sort_order", { ascending: true }),
+    supabaseClient.from("experience_entries").select("*").order("sort_order", { ascending: true })
   ]);
 
   if (profileResult.error) {
@@ -704,12 +704,12 @@ async function refreshAuthState() {
     return;
   }
 
-  const { data } = await supabase.auth.getSession();
+  const { data } = await supabaseClient.auth.getSession();
   state.user = data.session ? data.session.user : null;
   state.isAdmin = false;
 
   if (state.user) {
-    const { data: isAdmin, error } = await supabase.rpc("is_admin");
+    const { data: isAdmin, error } = await supabaseClient.rpc("is_admin");
     state.isAdmin = !error && Boolean(isAdmin);
   }
 
@@ -909,7 +909,7 @@ async function refreshItems() {
     return;
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from("projects")
     .select("*")
     .order("created_at", { ascending: false });
@@ -991,7 +991,7 @@ function isHtmlFile(file) {
 
 async function uploadProjectFile(file) {
   const path = `${makeId()}-${sanitizeFileName(file.name)}`;
-  const { error } = await supabase.storage.from(filesBucket).upload(path, file, {
+  const { error } = await supabaseClient.storage.from(filesBucket).upload(path, file, {
     cacheControl: "3600",
     contentType: file.type || "application/octet-stream",
     upsert: false
@@ -1005,14 +1005,14 @@ async function uploadProjectFile(file) {
 }
 
 async function insertProject(item) {
-  const { error } = await supabase.from("projects").insert(projectToRow(item));
+  const { error } = await supabaseClient.from("projects").insert(projectToRow(item));
   if (error) {
     throw error;
   }
 }
 
 async function updateProject(id, item) {
-  const { error } = await supabase.from("projects").update(projectToRow(item)).eq("id", id);
+  const { error } = await supabaseClient.from("projects").update(projectToRow(item)).eq("id", id);
   if (error) {
     throw error;
   }
@@ -1087,7 +1087,7 @@ async function handleUpload(event) {
     if (projectId) {
       await updateProject(projectId, upload);
       if (oldFilePath && oldFilePath !== upload.filePath) {
-        await supabase.storage.from(filesBucket).remove([oldFilePath]);
+        await supabaseClient.storage.from(filesBucket).remove([oldFilePath]);
       }
     } else {
       await insertProject(upload);
@@ -1100,7 +1100,7 @@ async function handleUpload(event) {
     console.error(error);
     elements.formNote.textContent = "The project could not be saved. Check your content policies and connection.";
     if (uploadedFilePath) {
-      await supabase.storage.from(filesBucket).remove([uploadedFilePath]);
+      await supabaseClient.storage.from(filesBucket).remove([uploadedFilePath]);
     }
   }
 }
@@ -1142,7 +1142,7 @@ async function exportPortfolioData() {
 }
 
 async function replaceToolkit(names = []) {
-  const { error: deleteError } = await supabase.from("toolkit_items").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  const { error: deleteError } = await supabaseClient.from("toolkit_items").delete().neq("id", "00000000-0000-0000-0000-000000000000");
   if (deleteError) {
     throw deleteError;
   }
@@ -1151,7 +1151,7 @@ async function replaceToolkit(names = []) {
     return;
   }
 
-  const { error } = await supabase.from("toolkit_items").insert(
+  const { error } = await supabaseClient.from("toolkit_items").insert(
     names.map((name, index) => ({
       name,
       sort_order: index + 1
@@ -1164,7 +1164,7 @@ async function replaceToolkit(names = []) {
 }
 
 async function replaceExperience(entries = []) {
-  const { error: deleteError } = await supabase
+  const { error: deleteError } = await supabaseClient
     .from("experience_entries")
     .delete()
     .neq("id", "00000000-0000-0000-0000-000000000000");
@@ -1176,7 +1176,7 @@ async function replaceExperience(entries = []) {
     return;
   }
 
-  const { error } = await supabase.from("experience_entries").insert(
+  const { error } = await supabaseClient.from("experience_entries").insert(
     entries.map((entry, index) => ({
       title: entry.title,
       description: entry.description,
@@ -1198,7 +1198,7 @@ async function importPortfolioData(file) {
   const payload = JSON.parse(text);
   const content = normalizeContent(payload.content || {});
 
-  const { error: profileError } = await supabase.from("profile").upsert(
+  const { error: profileError } = await supabaseClient.from("profile").upsert(
     {
       id: 1,
       name: content.profile.name,
@@ -1266,7 +1266,7 @@ async function deleteProject(id) {
     return;
   }
 
-  const { error } = await supabase.from("projects").delete().eq("id", id);
+  const { error } = await supabaseClient.from("projects").delete().eq("id", id);
   if (error) {
     window.alert("The project could not be deleted.");
     console.error(error);
@@ -1274,7 +1274,7 @@ async function deleteProject(id) {
   }
 
   if (item.filePath) {
-    await supabase.storage.from(filesBucket).remove([item.filePath]);
+    await supabaseClient.storage.from(filesBucket).remove([item.filePath]);
   }
 
   await refreshItems();
@@ -1291,7 +1291,7 @@ async function clearProjects() {
   }
 
   const filePaths = state.items.filter((item) => item.source === "remote" && item.filePath).map((item) => item.filePath);
-  const { error } = await supabase.from("projects").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  const { error } = await supabaseClient.from("projects").delete().neq("id", "00000000-0000-0000-0000-000000000000");
 
   if (error) {
     console.error(error);
@@ -1300,7 +1300,7 @@ async function clearProjects() {
   }
 
   if (filePaths.length) {
-    await supabase.storage.from(filesBucket).remove(filePaths);
+    await supabaseClient.storage.from(filesBucket).remove(filePaths);
   }
 
   elements.formNote.textContent = "Projects cleared.";
@@ -1319,7 +1319,7 @@ async function saveProfileFromCms() {
     show_starter_projects: form.showStarterProjects.checked
   };
 
-  const { error } = await supabase.from("profile").upsert(row, { onConflict: "id" });
+  const { error } = await supabaseClient.from("profile").upsert(row, { onConflict: "id" });
   if (error) {
     throw error;
   }
@@ -1340,7 +1340,7 @@ async function addTool() {
     return;
   }
 
-  const { error } = await supabase.from("toolkit_items").insert({
+  const { error } = await supabaseClient.from("toolkit_items").insert({
     name: value,
     sort_order: state.toolkitRows.length + 1
   });
@@ -1369,7 +1369,7 @@ async function addExperience() {
     return;
   }
 
-  const { error } = await supabase.from("experience_entries").insert({
+  const { error } = await supabaseClient.from("experience_entries").insert({
     title,
     description,
     sort_order: state.experienceRows.length + 1
@@ -1393,7 +1393,7 @@ async function deleteTool(id) {
     return;
   }
 
-  const { error } = await supabase.from("toolkit_items").delete().eq("id", id);
+  const { error } = await supabaseClient.from("toolkit_items").delete().eq("id", id);
   if (error) {
     console.error(error);
     elements.cmsNote.textContent = "That service tag could not be removed.";
@@ -1410,7 +1410,7 @@ async function deleteExperience(id) {
     return;
   }
 
-  const { error } = await supabase.from("experience_entries").delete().eq("id", id);
+  const { error } = await supabaseClient.from("experience_entries").delete().eq("id", id);
   if (error) {
     console.error(error);
     elements.cmsNote.textContent = "That experience could not be removed.";
@@ -1471,7 +1471,7 @@ function bindEvents() {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) {
       elements.authNote.textContent = error.message;
       return;
@@ -1498,7 +1498,7 @@ function bindEvents() {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabaseClient.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: window.location.href }
     });
@@ -1508,7 +1508,7 @@ function bindEvents() {
 
   elements.logoutAdmin.addEventListener("click", async () => {
     if (isBackendReady()) {
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
       await refreshAuthState();
       elements.cmsDialog.close();
     }
@@ -1627,7 +1627,7 @@ function bindEvents() {
   }
 
   if (isBackendReady()) {
-    supabase.auth.onAuthStateChange(async () => {
+    supabaseClient.auth.onAuthStateChange(async () => {
       await refreshAuthState();
     });
   }
