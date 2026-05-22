@@ -1696,6 +1696,7 @@ dialog::backdrop {
   .hero-shell,
   .home-hero,
   .about-hero,
+  .admin-hero,
   .split-section,
   .filters,
   .project-overview {
@@ -2138,7 +2139,9 @@ h3 {
 .dialog-card,
 .reader-card,
 .contact-footer,
-.location-panel {
+.location-panel,
+.admin-login-panel,
+.admin-actions-panel {
   border-color: var(--line);
   background:
     linear-gradient(rgba(126, 231, 135, 0.035) 1px, transparent 1px),
@@ -2174,7 +2177,8 @@ h3 {
 .contact-banner,
 .resume-terminal,
 .resume-id-card,
-.projects-hero-panel {
+.projects-hero-panel,
+.admin-login-panel {
   background:
     linear-gradient(rgba(126, 231, 135, 0.055) 1px, transparent 1px),
     linear-gradient(90deg, rgba(126, 231, 135, 0.045) 1px, transparent 1px),
@@ -2480,6 +2484,50 @@ h3 {
   line-height: 1.62;
 }
 
+.admin-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.admin-login-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+}
+
+.admin-login-panel label {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.admin-login-actions,
+.admin-actions-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.admin-inline-note {
+  padding: 0;
+}
+
+.admin-console-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.admin-actions-panel {
+  padding: 1rem;
+  border: 1px solid var(--line);
+}
+
 .services-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2541,6 +2589,7 @@ h3 {
 @media (max-width: 940px) {
   .resume-hero,
   .projects-hero,
+  .admin-hero,
   .resume-grid,
   .certification-grid,
   .resume-bottom-grid,
@@ -2595,4 +2644,23 @@ h3 {
     padding: 0.65rem;
     font-size: clamp(0.29rem, 1.25vw, 0.42rem);
   }
+}
+
+/* Compact content type scale */
+main :is(h1, h2, h3),
+dialog :is(h1, h2, h3),
+main :is(.section-heading h2, .center-heading h2, .terminal-section-heading h2),
+main :is(.page-hero h1, .about-hero h1, .projects-hero h1, .services-hero h1, .resume-terminal h1),
+main :is(.services-grid h2, .contact-message-section h2, .connect-section h2, .location-copy h2),
+dialog :is(.dialog-header h2, .reader-header h2, .article-content h1, .article-content h2, .article-content h3) {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+main :is(p, li, label, input, textarea, select, button, span, small),
+dialog :is(p, li, label, input, textarea, select, button, span, small),
+main :is(.eyebrow, .terminal-kicker, .resume-role, .project-terminal-list span, .services-grid p, .services-grid li),
+dialog :is(.form-note, .panel-note, .article-content p, .article-content li, .reader-meta span) {
+  font-size: 12px;
+  line-height: 1.6;
 }
