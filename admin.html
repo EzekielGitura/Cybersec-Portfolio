@@ -29,18 +29,22 @@
     </header>
 
     <main id="top">
-      <section class="page-hero admin-hero" aria-labelledby="adminTitle">
-        <div>
-          <p class="eyebrow">/admin</p>
-          <h1 id="adminTitle">Content console</h1>
-          <p>
-            Authenticate before changing portfolio content, uploading reports, or editing service
-            and experience entries.
-          </p>
+      <section class="admin-login-shell" id="adminLogin" aria-labelledby="adminTitle">
+        <div class="admin-login-brand">
+          <img src="/Assets/logo.png" alt="Ezekiel's Portfolio logo" />
+          <div>
+            <p class="eyebrow">/secure console</p>
+            <h1 id="adminTitle">Admin Access</h1>
+            <p>
+              Authenticate before changing portfolio content, uploading reports, or editing service
+              and experience entries.
+            </p>
+          </div>
         </div>
 
         <form class="admin-login-panel" id="authForm">
           <p class="eyebrow">Authentication</p>
+          <h2>Login</h2>
           <label>
             Email
             <input name="email" type="email" autocomplete="email" required />
@@ -57,7 +61,7 @@
         </form>
       </section>
 
-      <section class="section-block admin-console-grid" aria-labelledby="consoleTitle">
+      <section class="section-block admin-console-grid" id="adminConsole" aria-labelledby="consoleTitle" hidden>
         <div class="section-heading">
           <div>
             <p class="eyebrow">Console</p>

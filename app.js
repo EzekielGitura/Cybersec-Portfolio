@@ -170,6 +170,8 @@ const elements = {
   brandName: document.querySelector("#brandName"),
   heroTitle: document.querySelector("#heroTitle"),
   heroText: document.querySelector("#heroText"),
+  adminLogin: document.querySelector("#adminLogin"),
+  adminConsole: document.querySelector("#adminConsole"),
   workGrid: document.querySelector("#workGrid"),
   carouselStatus: document.querySelector("#carouselStatus"),
   prevProject: document.querySelector("#prevProject"),
@@ -260,6 +262,17 @@ function setStatus(element, message) {
   if (element) {
     element.textContent = message;
   }
+}
+
+function getAuthErrorMessage(error) {
+  const message = error?.message || "Login failed.";
+  if (/invalid login credentials/i.test(message)) {
+    return "Supabase rejected those credentials. Confirm the user exists in Authentication > Users, has a password set, and is allowed to sign in.";
+  }
+  if (/email not confirmed/i.test(message)) {
+    return "That email is not confirmed yet. Confirm it in Supabase Auth or disable email confirmation for this project.";
+  }
+  return message;
 }
 
 function makeId() {
@@ -612,8 +625,17 @@ function updateAdminUi() {
     return;
   }
 
+  const showConsole = Boolean(state.isAdmin);
+  if (elements.adminLogin) {
+    elements.adminLogin.hidden = showConsole;
+  }
+  if (elements.adminConsole) {
+    elements.adminConsole.hidden = !showConsole;
+  }
+
   if (!isBackendReady()) {
     setStatus(elements.adminStatus, "Configure the content connection before editing.");
+    setStatus(elements.authNote, "Sign-in is not available until Supabase is configured.");
     if (elements.openCms) {
       elements.openCms.textContent = "Content Studio";
     }
@@ -631,6 +653,7 @@ function updateAdminUi() {
   }
   if (state.isAdmin) {
     setStatus(elements.adminStatus, `Logged in as ${state.user.email}.`);
+    setStatus(elements.authNote, "");
     if (elements.openCms) {
       elements.openCms.textContent = "Content Studio";
     }
@@ -639,6 +662,7 @@ function updateAdminUi() {
     }
   } else if (state.user) {
     setStatus(elements.adminStatus, "This account is not listed in admin_users.");
+    setStatus(elements.authNote, "This login is valid, but the user is not authorized for this admin console.");
     if (elements.openCms) {
       elements.openCms.textContent = "Admin Login";
     }
@@ -1514,18 +1538,21 @@ function bindEvents() {
 
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) {
-        elements.authNote.textContent = error.message;
+        elements.authNote.textContent = getAuthErrorMessage(error);
         return;
       }
 
       await refreshAuthState();
       if (state.isAdmin) {
-        if (elements.authDialog) {
-          elements.authDialog.close();
-        }
         populateCmsForm();
-        elements.cmsDialog.showModal();
+        return;
       }
+
+      await supabaseClient.auth.signOut();
+      state.user = null;
+      state.isAdmin = false;
+      updateAdminUi();
+      elements.authNote.textContent = "Login succeeded, but this user is not in admin_users. Add the Supabase user id to admin_users, then try again.";
     });
   }
 
@@ -1548,7 +1575,7 @@ function bindEvents() {
         options: { emailRedirectTo: window.location.href }
       });
 
-      elements.authNote.textContent = error ? error.message : "Magic link sent. Check your email.";
+      elements.authNote.textContent = error ? getAuthErrorMessage(error) : "Magic link sent. Check your email.";
     });
   }
 
