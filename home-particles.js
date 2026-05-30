@@ -1,4 +1,5 @@
 (() => {
+  function initParticles() {
   let canvas = document.querySelector("#homeParticleCanvas") || document.querySelector(".site-particle-bg");
   if (!canvas) {
     canvas = document.createElement("canvas");
@@ -14,7 +15,7 @@
   }
 
   const particles = [];
-  const maxParticles = 3200;
+  let maxParticles = 1800;
   const particleColor = { r: 126, g: 231, b: 135 };
 
   let width = 0;
@@ -42,6 +43,11 @@
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    maxParticles = width < 640 ? 900 : width < 1024 ? 1500 : 2400;
+
+    if (particles.length > maxParticles) {
+      particles.splice(0, particles.length - maxParticles);
+    }
 
     sphereRad = Math.max(300, Math.min(Math.max(width * 0.86, height * 0.74), 1800));
     fLen = Math.max(720, width * 2, height * 1.35);
@@ -179,4 +185,24 @@
     }
   });
   start();
+  }
+
+  function scheduleInit() {
+    const run = () => {
+      window.requestAnimationFrame(initParticles);
+    };
+
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(run, { timeout: 900 });
+      return;
+    }
+
+    window.setTimeout(run, 250);
+  }
+
+  if (document.readyState === "complete") {
+    scheduleInit();
+  } else {
+    window.addEventListener("load", scheduleInit, { once: true });
+  }
 })();

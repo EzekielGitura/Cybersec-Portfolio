@@ -7,13 +7,31 @@
     <meta name="description" content="Private content console for Ezekiel's portfolio." />
     <title>Admin | Ezekiel's Portfolio</title>
     <link rel="icon" type="image/jpeg" href="/Assets/icon.jpg" />
+    <link
+      rel="preload"
+      as="image"
+      href="/Assets/logo-320.jpg"
+      imagesrcset="/Assets/logo-160.jpg 160w, /Assets/logo-320.jpg 320w, /Assets/logo-512.jpg 512w"
+      imagesizes="(max-width: 780px) 132px, 180px"
+      fetchpriority="high"
+    />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body data-page="admin">
     <main class="admin-page" id="top">
       <section class="admin-login-shell" id="adminLogin" aria-labelledby="adminTitle">
         <div class="admin-login-brand">
-          <img src="/Assets/logo.png" alt="Ezekiel's Portfolio logo" />
+          <img
+            src="/Assets/logo-320.jpg"
+            srcset="/Assets/logo-160.jpg 160w, /Assets/logo-320.jpg 320w, /Assets/logo-512.jpg 512w"
+            sizes="(max-width: 780px) 132px, 180px"
+            width="180"
+            height="180"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            alt="Ezekiel's Portfolio logo"
+          />
           <div>
             <p class="eyebrow">Ezekiel's Portfolio</p>
             <h1 id="adminTitle">Welcome Back</h1>
