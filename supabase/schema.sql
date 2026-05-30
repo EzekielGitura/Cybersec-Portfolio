@@ -42,9 +42,13 @@ create table if not exists public.projects (
   file_path text,
   file_name text,
   mime_type text,
+  external_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.projects
+add column if not exists external_url text;
 
 create table if not exists public.toolkit_items (
   id uuid primary key default gen_random_uuid(),

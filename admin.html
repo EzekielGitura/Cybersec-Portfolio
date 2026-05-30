@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <form class="admin-login-panel" id="authForm">
+        <form class="admin-login-panel" id="authForm" action="/admin" method="post" autocomplete="on">
           <p class="eyebrow">Authentication</p>
           <h2>Login</h2>
           <label>
@@ -32,10 +32,11 @@
           </label>
           <label>
             Password
-            <input name="password" type="password" autocomplete="current-password" />
+            <input name="password" type="password" autocomplete="current-password" required />
           </label>
           <div class="admin-login-actions">
             <button class="secondary-action" id="sendMagicLink" type="button">Send Magic Link</button>
+            <button class="secondary-action" id="requestPasswordReset" type="button">Reset Password</button>
             <button class="primary-action" type="submit">Log In</button>
           </div>
           <p class="form-note admin-inline-note" id="authNote" role="status"></p>
@@ -73,18 +74,14 @@
         <div class="filters" aria-label="Portfolio filters">
           <label class="search-field">
             <span>Search</span>
-            <input id="searchInput" type="search" placeholder="Find a project to edit..." />
+            <input id="searchInput" type="search" placeholder="Find a project or article to edit..." />
           </label>
           <div class="filter-buttons" role="list" aria-label="Categories">
             <button class="filter-button active" type="button" data-filter="all">All</button>
-            <button class="filter-button" type="button" data-filter="Incident Response">
-              Incident Response
-            </button>
-            <button class="filter-button" type="button" data-filter="Vulnerability Management">
-              Vulnerability Management
-            </button>
-            <button class="filter-button" type="button" data-filter="Cloud Security">Cloud</button>
-            <button class="filter-button" type="button" data-filter="Security Research">Research</button>
+            <button class="filter-button" type="button" data-filter="Networking">Networking</button>
+            <button class="filter-button" type="button" data-filter="Cloud">Cloud</button>
+            <button class="filter-button" type="button" data-filter="Cybersecurity">Cybersecurity</button>
+            <button class="filter-button" type="button" data-filter="Articles">Articles</button>
           </div>
         </div>
 
@@ -129,12 +126,10 @@
           <label>
             Category
             <select name="category" required>
-              <option>Incident Response</option>
-              <option>Vulnerability Management</option>
-              <option>Cloud Security</option>
-              <option>Security Research</option>
-              <option>Governance, Risk, and Compliance</option>
-              <option>Training and Labs</option>
+              <option>Networking</option>
+              <option>Cloud</option>
+              <option>Cybersecurity</option>
+              <option>Articles</option>
             </select>
           </label>
           <label>
@@ -144,6 +139,10 @@
           <label>
             Tags
             <input name="tags" placeholder="SIEM, Linux, MITRE ATT&CK" />
+          </label>
+          <label class="full-width">
+            Full writeup link
+            <input name="externalUrl" type="url" placeholder="https://your-substack.com/p/project-writeup" />
           </label>
           <label class="full-width">
             Short summary
@@ -156,7 +155,7 @@
             ></textarea>
           </label>
           <label class="full-width">
-            PDF, Markdown, TXT, or HTML file
+            Optional PDF, Markdown, TXT, or HTML file
             <input
               name="file"
               type="file"
@@ -164,11 +163,11 @@
             />
           </label>
           <label class="full-width">
-            Or paste a blog post/writeup
+            Optional article body
             <textarea
               name="body"
               rows="8"
-              placeholder="# Investigation notes&#10;&#10;Write or paste markdown here when you are not uploading a file."
+              placeholder="# Investigation notes&#10;&#10;Paste markdown here, or keep this empty when linking to Substack."
             ></textarea>
           </label>
         </div>

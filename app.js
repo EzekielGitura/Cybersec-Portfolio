@@ -45,7 +45,7 @@ const starterWork = [
     source: "sample",
     type: "post",
     title: "Incident Response Lab: Suspicious PowerShell Investigation",
-    category: "Incident Response",
+    category: "Cybersecurity",
     date: "2026-02",
     summary:
       "A walk-through of triaging suspicious PowerShell activity, collecting host artifacts, and mapping the behavior to MITRE ATT&CK.",
@@ -69,7 +69,7 @@ The investigation confirmed malicious execution intent. The recommended response
     source: "sample",
     type: "post",
     title: "Vulnerability Assessment Report: Exposed Services",
-    category: "Vulnerability Management",
+    category: "Cybersecurity",
     date: "2026-01",
     summary:
       "A sample report format for prioritizing exposed services, validating scan output, and turning technical findings into remediation actions.",
@@ -95,7 +95,7 @@ Restrict administrative access, disable legacy protocol support, and assign owne
     source: "sample",
     type: "post",
     title: "Cloud IAM Review: Least Privilege Cleanup",
-    category: "Cloud Security",
+    category: "Cloud",
     date: "2025-12",
     summary:
       "A practical writeup for reviewing privileged identities, unused permissions, and logging gaps in a cloud lab.",
@@ -119,7 +119,7 @@ The review produced a permission cleanup plan, a logging checklist, and a short 
     source: "sample",
     type: "post",
     title: "Security Research Notes: Phishing Infrastructure Triage",
-    category: "Security Research",
+    category: "Articles",
     date: "2025-11",
     summary:
       "Notes on collecting indicators, reviewing domain patterns, and writing a concise threat intelligence summary.",
@@ -143,6 +143,7 @@ const backend = window.portfolioBackend || {};
 const supabaseClient = backend.client;
 const filesBucket = backend.bucket || "project-files";
 const isAdminPage = document.body.dataset.page === "admin";
+const projectCategories = ["Networking", "Cloud", "Cybersecurity", "Articles"];
 
 const state = {
   content: normalizeContent(contentDefaults),
@@ -200,6 +201,7 @@ const elements = {
   cmsForm: document.querySelector("#cmsForm"),
   authForm: document.querySelector("#authForm"),
   sendMagicLink: document.querySelector("#sendMagicLink"),
+  requestPasswordReset: document.querySelector("#requestPasswordReset"),
   clearUploads: document.querySelector("#clearUploads"),
   formNote: document.querySelector("#formNote"),
   cmsNote: document.querySelector("#cmsNote"),
@@ -267,12 +269,27 @@ function setStatus(element, message) {
 function getAuthErrorMessage(error) {
   const message = error?.message || "Login failed.";
   if (/invalid login credentials/i.test(message)) {
-    return "Supabase rejected those credentials. Confirm the user exists in Authentication > Users, has a password set, and is allowed to sign in.";
+    return "Supabase rejected the email/password before the admin check. Confirm the Auth user exists, has a password set, and the email is confirmed.";
   }
   if (/email not confirmed/i.test(message)) {
     return "That email is not confirmed yet. Confirm it in Supabase Auth or disable email confirmation for this project.";
   }
   return message;
+}
+
+function cleanCredentialQuery() {
+  if (!isAdminPage) {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has("email") && !url.searchParams.has("password")) {
+    return;
+  }
+
+  url.searchParams.delete("email");
+  url.searchParams.delete("password");
+  window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
 }
 
 function makeId() {
@@ -447,13 +464,32 @@ function normalizeTags(tags) {
     .filter(Boolean);
 }
 
+function normalizeCategory(category) {
+  const value = String(category || "").trim();
+  return projectCategories.includes(value) ? value : "Cybersecurity";
+}
+
+function normalizeExternalUrl(value = "") {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  try {
+    const url = new URL(trimmed);
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
 function rowToProject(row) {
   const item = {
     id: row.id,
     source: "remote",
     type: row.type || "post",
     title: row.title,
-    category: row.category,
+    category: normalizeCategory(row.category),
     date: row.project_month,
     summary: row.summary,
     tags: row.tags || [],
@@ -461,6 +497,7 @@ function rowToProject(row) {
     filePath: row.file_path || "",
     fileName: row.file_name || "",
     mimeType: row.mime_type || "",
+    externalUrl: row.external_url || "",
     createdAt: row.created_at
   };
 
@@ -482,7 +519,8 @@ function projectToRow(item) {
     body: item.body || null,
     file_path: item.filePath || null,
     file_name: item.fileName || null,
-    mime_type: item.mimeType || null
+    mime_type: item.mimeType || null,
+    external_url: normalizeExternalUrl(item.externalUrl) || null
   };
 }
 
@@ -586,10 +624,11 @@ function populateProjectForm(item) {
   resetProjectForm();
   elements.uploadForm.elements.projectId.value = item.id;
   elements.uploadForm.elements.title.value = item.title;
-  elements.uploadForm.elements.category.value = item.category;
+  elements.uploadForm.elements.category.value = normalizeCategory(item.category);
   elements.uploadForm.elements.date.value = item.date;
   elements.uploadForm.elements.tags.value = normalizeTags(item.tags).join(", ");
   elements.uploadForm.elements.summary.value = item.summary;
+  elements.uploadForm.elements.externalUrl.value = item.externalUrl || "";
   elements.uploadForm.elements.body.value = item.type === "pdf" ? "" : item.body || "";
   elements.uploadTitle.textContent = "Edit project or writeup";
   elements.saveProjectButton.textContent = "Update Project";
@@ -1003,6 +1042,17 @@ function renderReader(item) {
     }
   );
 
+  const externalUrl = normalizeExternalUrl(item.externalUrl);
+  if (externalUrl) {
+    const fullWriteup = document.createElement("a");
+    fullWriteup.className = "download-link reader-download";
+    fullWriteup.href = externalUrl;
+    fullWriteup.target = "_blank";
+    fullWriteup.rel = "noopener noreferrer";
+    fullWriteup.textContent = "Read full writeup";
+    elements.readerBody.append(fullWriteup);
+  }
+
   if (item.type === "pdf" && item.fileUrl) {
     const download = document.createElement("a");
     download.className = "download-link reader-download";
@@ -1084,6 +1134,7 @@ async function handleUpload(event) {
   const existingProject = projectId ? getItemById(projectId) : null;
   const file = formData.get("file");
   const pastedBody = String(formData.get("body") || "").trim();
+  const externalUrl = normalizeExternalUrl(formData.get("externalUrl"));
   const title = String(formData.get("title") || "").trim();
   const summary = String(formData.get("summary") || "").trim();
 
@@ -1092,22 +1143,28 @@ async function handleUpload(event) {
     return;
   }
 
-  if ((!file || !file.name) && !pastedBody && !existingProject) {
-    elements.formNote.textContent = "Upload a file or paste a writeup.";
+  if (String(formData.get("externalUrl") || "").trim() && !externalUrl) {
+    elements.formNote.textContent = "Use a valid http or https link for the full writeup.";
+    return;
+  }
+
+  if ((!file || !file.name) && !pastedBody && !externalUrl && !existingProject) {
+    elements.formNote.textContent = "Add a highlight, paste an article, upload a file, or attach a Substack link.";
     return;
   }
 
   const upload = {
     type: existingProject ? existingProject.type : file && file.name && isPdfFile(file) ? "pdf" : file && file.name && isHtmlFile(file) ? "html" : "post",
     title,
-    category: String(formData.get("category")),
+    category: normalizeCategory(formData.get("category")),
     date: String(formData.get("date")),
     summary,
     tags: normalizeTags(formData.get("tags")),
     body: existingProject ? existingProject.body || "" : "",
     filePath: existingProject ? existingProject.filePath || "" : "",
     fileName: existingProject ? existingProject.fileName || "" : "",
-    mimeType: existingProject ? existingProject.mimeType || "" : ""
+    mimeType: existingProject ? existingProject.mimeType || "" : "",
+    externalUrl
   };
   let uploadedFilePath = "";
 
@@ -1288,7 +1345,8 @@ async function importPortfolioData(file) {
       body: project.body || "",
       filePath: project.file_path || project.filePath || "",
       fileName: project.file_name || project.fileName || "",
-      mimeType: project.mime_type || project.mimeType || ""
+      mimeType: project.mime_type || project.mimeType || "",
+      externalUrl: project.external_url || project.externalUrl || ""
     };
 
     if (project.fileDataUrl && item.type === "pdf") {
@@ -1579,6 +1637,30 @@ function bindEvents() {
     });
   }
 
+  if (elements.requestPasswordReset) {
+    elements.requestPasswordReset.addEventListener("click", async () => {
+      if (!isBackendReady()) {
+        elements.authNote.textContent = "Password reset is not available yet.";
+        return;
+      }
+
+      const formData = new FormData(elements.authForm);
+      const email = String(formData.get("email") || "").trim();
+      if (!email) {
+        elements.authNote.textContent = "Add your email first.";
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/admin`
+      });
+
+      elements.authNote.textContent = error
+        ? getAuthErrorMessage(error)
+        : "Password reset sent. Use it if this Auth user does not have a password yet.";
+    });
+  }
+
   if (elements.logoutAdmin) {
     elements.logoutAdmin.addEventListener("click", async () => {
       if (isBackendReady()) {
@@ -1727,6 +1809,7 @@ function bindEvents() {
 }
 
 async function init() {
+  cleanCredentialQuery();
   bindEvents();
   await loadRemoteContent();
   renderContent();
