@@ -2743,3 +2743,202 @@ dialog :is(.dialog-card, .reader-card) :is(p, li, label, input, textarea, select
   font-size: 12px;
   line-height: 1.6;
 }
+
+/* Admin login page */
+body[data-page="admin"] {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(126, 231, 135, 0.18), transparent 24%),
+    radial-gradient(circle at 88% 72%, rgba(126, 231, 135, 0.12), transparent 28%),
+    linear-gradient(rgba(126, 231, 135, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 231, 135, 0.022) 1px, transparent 1px),
+    #050705;
+  background-size: auto, auto, 22px 22px, 22px 22px, auto;
+}
+
+body[data-page="admin"] .admin-page {
+  display: grid;
+  width: min(1080px, calc(100% - 2rem));
+  min-height: 100svh;
+  align-content: center;
+  padding: clamp(1rem, 4vw, 3rem) 0;
+}
+
+body[data-page="admin"] .admin-login-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.72fr);
+  min-height: min(620px, calc(100svh - 3rem));
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(126, 231, 135, 0.36);
+  border-radius: 8px;
+  background:
+    linear-gradient(rgba(126, 231, 135, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 231, 135, 0.03) 1px, transparent 1px),
+    rgba(6, 13, 8, 0.9);
+  background-size: 20px 20px, 20px 20px, auto;
+  box-shadow:
+    0 0 0 1px rgba(126, 231, 135, 0.12),
+    0 22px 80px rgba(0, 0, 0, 0.58);
+}
+
+body[data-page="admin"] .admin-login-brand {
+  position: relative;
+  display: grid;
+  min-height: 440px;
+  align-content: center;
+  justify-items: center;
+  padding: clamp(1.5rem, 5vw, 3.2rem);
+  overflow: hidden;
+  border-right: 1px solid rgba(126, 231, 135, 0.18);
+  background:
+    radial-gradient(circle at 32% 32%, rgba(255, 255, 255, 0.88), rgba(210, 247, 218, 0.74) 21%, transparent 22%),
+    radial-gradient(circle at 68% 64%, rgba(126, 231, 135, 0.2), transparent 28%),
+    linear-gradient(135deg, rgba(217, 255, 225, 0.86), rgba(126, 231, 135, 0.12) 52%, rgba(5, 10, 5, 0.42));
+  color: #08230d;
+  text-align: center;
+}
+
+body[data-page="admin"] .admin-login-brand::before {
+  position: absolute;
+  inset: 8% 14% 12% 6%;
+  border-radius: 42% 58% 50% 44%;
+  background:
+    radial-gradient(circle at 54% 40%, rgba(126, 231, 135, 0.18), transparent 34%),
+    rgba(247, 255, 248, 0.82);
+  content: "";
+}
+
+body[data-page="admin"] .admin-login-brand img,
+body[data-page="admin"] .admin-login-brand div {
+  position: relative;
+  z-index: 1;
+}
+
+body[data-page="admin"] .admin-login-brand img {
+  display: block;
+  width: min(36%, 180px);
+  min-width: 118px;
+  aspect-ratio: 1;
+  object-fit: contain;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(126, 231, 135, 0.42);
+  border-radius: 8px;
+  background: rgba(5, 8, 5, 0.92);
+  filter:
+    drop-shadow(0 0 9px rgba(126, 231, 135, 0.7))
+    drop-shadow(0 0 22px rgba(126, 231, 135, 0.34));
+}
+
+body[data-page="admin"] .admin-login-brand div {
+  max-width: 390px;
+}
+
+body[data-page="admin"] .admin-login-brand .eyebrow,
+body[data-page="admin"] .admin-login-brand h1,
+body[data-page="admin"] .admin-login-brand p {
+  color: #08230d;
+  text-shadow: none;
+}
+
+body[data-page="admin"] .admin-login-brand h1 {
+  margin-bottom: 0.45rem;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+body[data-page="admin"] .admin-login-brand p:not(.eyebrow) {
+  max-width: 330px;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+body[data-page="admin"] .admin-login-panel {
+  display: grid;
+  width: min(100%, 360px);
+  align-content: center;
+  justify-self: center;
+  gap: 0.85rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  border: 0;
+  background: transparent;
+}
+
+body[data-page="admin"] .admin-login-panel h2 {
+  margin: 0.1rem 0 0.5rem;
+  color: var(--green);
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+body[data-page="admin"] .admin-login-panel label {
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: none;
+}
+
+body[data-page="admin"] .admin-login-panel input {
+  width: 100%;
+  min-height: 36px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(126, 231, 135, 0.22);
+  border-radius: 999px;
+  color: var(--green);
+  background: rgba(1, 10, 4, 0.72);
+  outline: none;
+}
+
+body[data-page="admin"] .admin-login-panel input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 2px rgba(126, 231, 135, 0.16);
+}
+
+body[data-page="admin"] .admin-login-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+}
+
+body[data-page="admin"] .admin-login-actions button {
+  width: 100%;
+  min-height: 38px;
+  border-radius: 999px;
+}
+
+body[data-page="admin"] .admin-inline-note {
+  min-height: 2.5rem;
+  padding: 0;
+  color: var(--muted);
+}
+
+body[data-page="admin"] .admin-console-grid {
+  width: 100%;
+}
+
+@media (max-width: 780px) {
+  body[data-page="admin"] .admin-page {
+    width: min(100% - 1rem, 1080px);
+    align-content: start;
+    padding-top: 1rem;
+  }
+
+  body[data-page="admin"] .admin-login-shell {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  body[data-page="admin"] .admin-login-brand {
+    min-height: 260px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(126, 231, 135, 0.18);
+  }
+
+  body[data-page="admin"] .admin-login-brand img {
+    width: min(34%, 132px);
+    min-width: 96px;
+  }
+}
